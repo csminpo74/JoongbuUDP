@@ -9,13 +9,13 @@
 #include <iostream>
 
 #define MAXBUF  0xFFFF
-
+/*
 typedef struct
 {
 	WINDIVERT_IPHDR ip;
 	WINDIVERT_TCPHDR tcp;
 } TCPPACKET, *PTCPPACKET;
-
+*/
 int __cdecl main(int argc, char **argv)
 {
 	HANDLE handle;
@@ -25,7 +25,6 @@ int __cdecl main(int argc, char **argv)
 	WINDIVERT_ADDRESS recv_addr;
 	PWINDIVERT_IPHDR ip_header;
 	UINT payload_len;
-	
 	switch (argc)
 	{
 	case 3:
@@ -66,19 +65,24 @@ int __cdecl main(int argc, char **argv)
 		if (ip_header == NULL) {
 			continue;
 		}
-		UINT8 *src_addr = (UINT8 *)&ip_header->SrcAddr;
-		UINT8 *dst_addr = (UINT8 *)&ip_header->DstAddr;
-
-		inet_pton(AF_INET, "10.100.111.71", src_addr);
-		inet_pton(AF_INET, "10.100.111.121", dst_addr);
-
-		printf("ip.SrcAddr=%u.%u.%u.%u ip.DstAddr=%u.%u.%u.%u ",
+		
+		UINT8 *src_addr = (UINT8 *)&ip_header->SrcAddr;	//xxx.121	쏘는사람
+		UINT8 *dst_addr = (UINT8 *)&ip_header->DstAddr;	//xxx.71	원래 받는사람
+		
+		printf("ip.SrcAddr=%u.%u.%u.%u ip.DstAddr=%u.%u.%u.%u \n",
 			src_addr[0], src_addr[1], src_addr[2], src_addr[3],
 			dst_addr[0], dst_addr[1], dst_addr[2], dst_addr[3]);
-
-		WinDivertHelperCalcChecksums(packet, packet_len, 0);
-		if (!WinDivertSend(handle, packet, packet_len, &recv_addr, NULL)) {
-			std::cout << '!' << std::endl;
+		inet_pton(AF_INET, "10.100.111.219", src_addr);
+		inet_pton(AF_INET, "10.100.111.121", dst_addr);
+		
+		printf(">>ip.SrcAddr=%u.%u.%u.%u ip.DstAddr=%u.%u.%u.%u\n",
+			src_addr[0], src_addr[1], src_addr[2], src_addr[3],
+			dst_addr[0], dst_addr[1], dst_addr[2], dst_addr[3]);
+		if (*(UINT32 *)src_addr == *(UINT32 *)&ip_header->SrcAddr){
+			WinDivertHelperCalcChecksums(packet, packet_len, 0);
+			if (!WinDivertSend(handle, packet, packet_len, &recv_addr, NULL)) {
+				std::cout << '!' << std::endl;
+			}
 		}
 	}
 }
