@@ -66,8 +66,8 @@ int __cdecl main(int argc, char **argv)
 			continue;
 		}
 		
-		UINT8 *src_addr = (UINT8 *)&ip_header->SrcAddr;	//xxx.121	쏘는사람
-		UINT8 *dst_addr = (UINT8 *)&ip_header->DstAddr;	//xxx.71	원래 받는사람
+		UINT8 *src_addr = (UINT8 *)&ip_header->SrcAddr;	//쏘는사람
+		UINT8 *dst_addr = (UINT8 *)&ip_header->DstAddr;	//원래 받는사람
 		
 		printf("ip.SrcAddr=%u.%u.%u.%u ip.DstAddr=%u.%u.%u.%u \n",
 			src_addr[0], src_addr[1], src_addr[2], src_addr[3],
